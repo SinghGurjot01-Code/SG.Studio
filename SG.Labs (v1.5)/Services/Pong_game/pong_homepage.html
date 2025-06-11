@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pong Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .game-button {
+      background: none;
+      border: 2px solid white;
+      color: white;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      overflow: hidden;
+      z-index: 1;
+      transition: background 0.3s;
+    }
+
+    .game-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    canvas#particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 1rem;
+      color: #bbb;
+      text-align: center;
+      z-index: 2;
+      width: 100%;
+    }
+
+    footer a {
+      color: #00bfff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    footer span {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: #777;
+    }
+
+    #mute-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <h1>Pong Game</h1>
+  <div class="button-container">
+    <button class="game-button" onclick="location.href='1P_pong.html'">Single Player</button>
+    <button class="game-button" onclick="location.href='2P_pong.html'">Two Players</button>
+    <button class="game-button" onclick="location.href='Hardcore.html'">Hardcore Mode <small style="color:#888; font-size: 0.75rem;">(Soon)</small></button>
+  </div>
+
+  <!-- Mute/Unmute Button -->
+  <button id="mute-btn">Unmute</button>
+
+  <!-- Background Audio -->
+  <!-- <audio id="bg-audio" autoplay loop muted>
+    <source src="Audio/slowmotion.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio> -->
+
+  <!-- Footer Credits -->
+  <footer>
+    <span>Developed by <a href="https://github.com/SinghGurjot01-Code" target="_blank">SinghGurjot01-Code</a></span>
+    <!-- <span>Music by: <a href="https://www.bensound.com/royalty-free-music/track/slow-motion" target="_blank">Bensound.com</a></span> -->
+    <!-- <span>License Code: 8SXUKFOWIJTBMYNE</span> -->
+    <span>A Game by SG.Labs</span>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('particles');
+    const c = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+
+    class Particle {
+      constructor() {
+        this.position = {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height
+        };
+        this.velocity = {
+          x: (Math.random() - 0.5) * 0.5,
+          y: (Math.random() - 0.5) * 0.5
+        };
+        this.alpha = 1;
+        this.radius = 2 + Math.random() * 2;
+      }
+
+      draw() {
+        c.save();
+        c.globalAlpha = this.alpha;
+        c.fillStyle = 'white';
+        c.beginPath();
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      }
+
+      update() {
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        this.alpha -= 0.002;
+        if (this.alpha <= 0) this.reset();
+      }
+
+      reset() {
+        this.position.x = Math.random() * canvas.width;
+        this.position.y = Math.random() * canvas.height;
+        this.velocity.x = (Math.random() - 0.5) * 0.5;
+        this.velocity.y = (Math.random() - 0.5) * 0.5;
+        this.alpha = 1;
+      }
+    }
+
+    for (let i = 0; i < 150; i++) {
+      particles.push(new Particle());
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      c.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Mute/Unmute Logic
+    const audio = document.getElementById('bg-audio');
+    const muteBtn = document.getElementById('mute-btn');
+
+    muteBtn.addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? 'Unmute' : 'Mute';
+    });
+
+    
+    //block code inspect 
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    document.onkeydown = function (e) {
+      if (e.key === "F12" || (e.ctrlKey && ["u", "s", "c"].includes(e.key.toLowerCase()))) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+  </script>
+</body>
+</html>
