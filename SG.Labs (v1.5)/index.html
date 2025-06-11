@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SG.Studio: Code, Games & AI Projects</title>
+    <meta name="description" content="SG.Studio – Minimalist Dev Portfolio">
+    <link rel="icon" href="/Logo.jpg">
+    <link rel="apple-touch-icon" href="/Logo.jpg">
+    <meta property="og:image" content="/Logo.jpg">
+    <meta name="twitter:image" content="/Logo.jpg">
+
+
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #fff;
+            color: #000;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #0099ff;
+            text-decoration: underline;
+        }
+
+        /* Layout styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-logo-icon {
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-link {
+            font-size: 15px;
+            color: #999;
+            text-decoration: none;
+        }
+
+        .nav-button {
+            background-color: #eee;
+            border-radius: 100px;
+            padding: 0 12px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Hero section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 500px;
+            max-width: 960px;
+            margin: 0 auto;
+            gap: 40px;
+        }
+
+        .hero-title {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            text-align: center;
+            line-height: 1em;
+        }
+
+        .hero-subtitle {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            text-align: center;
+            line-height: 1em;
+            color: #999;
+        }
+
+        .hero-button {
+            background-color: #000;
+            color: #fff;
+            border-radius: 100px;
+            padding: 0 12px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Projects section */
+        .projects {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 0 80px;
+        }
+
+        .project-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        .project-description {
+            font-size: 15px;
+            font-weight: 500;
+            color: #777;
+            max-width: 330px;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 40px 0;
+        }
+
+        .project-item {
+            aspect-ratio: 1 / 1;
+            background-color: #f5f5f5;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .project-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .project-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        .project-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #222;
+        }
+
+        .project-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .project-link {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            background-color: #f5f5f5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chat-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Message styling */
+        .message-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .message-row.user {
+            justify-content: flex-end;
+        }
+
+        .message-row.bot {
+            justify-content: flex-start;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+
+        .user-message {
+            background-color: #e0e0e0;
+            color: #222;
+            border-radius: 16px 16px 4px 16px;
+            padding: 8px 16px;
+        }
+
+        .bot-message {
+            background-color: #eee;
+            color: #333;
+            border-radius: 16px 16px 16px 4px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .chat-input button:hover {
+            background-color: #000000;
+        }
+
+        .typing-indicator {
+            display: none;
+            color: #777;
+            font-size: 14px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Footer */
+        .footer {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 100px 0;
+            display: flex;
+            gap: 40px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .footer-link {
+            font-size: 15px;
+            font-weight: 500;
+            color: #999;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: #000;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1199px) {
+            .container {
+                max-width: 810px;
+            }
+
+            .hero-title,
+            .hero-subtitle {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 809px) {
+            .container {
+                max-width: 390px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                height: 200px;
+                gap: 20px;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects {
+                padding: 20px 0;
+            }
+
+            .footer {
+                flex-direction: column;
+                padding: 50px 0;
+                gap: 20px;
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer-section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .legal-section {
+                margin: 20px 0 0;
+            }
+        }
+
+        /* Center footer-section and right-align legal-section on desktop */
+        @media (min-width: 810px) {
+            .footer {
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .footer-section {
+                flex: 1;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 80px;
+            }
+
+            .legal-section {
+                display: flex;
+                align-items: flex-end;
+                justify-content: flex-end;
+                flex: 1;
+                text-align: right;
+            }
+
+            .legal-links {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                justify-content: flex-end;
+            }
+        }
+
+        /* Center everything on mobile */
+        @media (max-width: 809px) {
+            .footer-section {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .legal-section {
+                justify-content: center;
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .legal-links {
+                justify-content: center;
+            }
+        }
+    </style>
+    <style>
+        /* Modal styles */
+        #legal-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            align-items: center;
+            justify-content: center;
+        }
+
+        #legal-modal>div {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px 24px 24px 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        #legal-modal button {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        #modal-title {
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        #modal-content p {
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navigation">
+            <div class="nav-logo">
+                <span class="nav-logo-icon"></span>
+                <span>SG.Studio®</span>
+            </div>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">Home</a>
+                <a href="/Main/about.html" class="nav-link">About</a>
+                <a href="/Main/contact.html" class="nav-link">Contact</a>
+                <a href="/Main/Update.html" class="nav-link">Updates</a>
+            </div>
+        </nav>
+
+        <!-- Hero section -->
+        <section class="hero">
+            <h1 class="hero-title">Code • Games • AI</h1>
+            <h1 class="hero-subtitle">Web Developer • Game Developer</h1>
+            <button class="hero-button" onclick="window.scrollBy({ top: document.querySelector('.projects').getBoundingClientRect().top + window.scrollY + 450, behavior: 'smooth' });">Explore Projects</button>
+        </section>
+
+        <!-- Projects section -->
+        <section class="projects">
+            <!-- Chat interface -->
+            <div class="chat-container">
+                <div class="chat-header">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="16" width="48" height="32" rx="16" fill="#000000" />
+                        <ellipse cx="24" cy="32" rx="4" ry="5" fill="#fff" />
+                        <ellipse cx="40" cy="32" rx="4" ry="5" fill="#fff" />
+                        <rect x="28" y="40" width="8" height="3" rx="1.5" fill="#fff" />
+                        <rect x="24" y="12" width="16" height="8" rx="4" fill="#000000" />
+                        <circle cx="20" cy="12" r="2" fill="#fff" />
+                        <circle cx="44" cy="12" r="2" fill="#fff" />
+                    </svg>
+
+
+                    <h3>Luma AI</h3>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message-row bot">
+                        
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">Luma is typing...</div>
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="Ask about coding, games, or AI..."
+                        autocomplete="off">
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="project-title">Chat with Luma</h2>
+                <p class="project-description">
+                    Interact with my AI Bot Luma right here. Ask questions about web development,
+                    game design, or artificial intelligence projects—the chat interface lets you
+                    start a conversation instantly.
+                </p>
+            </div>
+
+            <div class="project-grid">
+                <!-- Pong Game Project -->
+                <div class="project-item">
+                    <svg class="project-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="10" width="20" height="4" fill="#333" rx="2"/>
+                        <circle cx="6" cy="12" r="2" fill="#FF6B6B"/>
+                        <circle cx="18" cy="12" r="2" fill="#4ECDC4"/>
+                        <rect x="10" y="8" width="4" height="8" fill="#333" rx="2"/>
+                    </svg>
+                    <div class="project-name">Pong Game</div>
+                    <div class="project-desc">Classic arcade game built with JavaScript</div>
+                    <a href="/Services/Pong_game/pong_homepage.html" class="project-link" target="_blank"></a>
+                </div>
+
+                <!-- HTML2App Project -->
+                <div class="project-item">
+                    <svg class="project-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="3" width="14" height="18" rx="2" fill="#4ECDC4"/>
+                        <rect x="8" y="6" width="8" height="2" fill="#fff"/>
+                        <rect x="8" y="10" width="8" height="2" fill="#fff"/>
+                        <rect x="8" y="14" width="5" height="2" fill="#fff"/>
+                    </svg>
+                    <div class="project-name">HTML2App</div>
+                    <div class="project-desc">Convert web projects to mobile apps</div>
+                    <a href="/Services/HTML2App/HTML2App.html" class="project-link" target="_blank"></a>
+                </div>
+
+                <!-- Luma Bot Project -->
+                <div class="project-item">
+                    <svg class="project-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="8" fill="#FFD166"/>
+                        <circle cx="9" cy="10" r="1" fill="#333"/>
+                        <circle cx="15" cy="10" r="1" fill="#333"/>
+                        <path d="M9 15a3 3 0 0 0 6 0" stroke="#333" stroke-width="2" fill="none"/>
+                    </svg>
+                    <div class="project-name">Luma Bot</div>
+                    <div class="project-desc">AI assistant for developers</div>
+                    <a href="/Services/Luma/Luma.html" class="project-link"></a>
+                </div>
+
+                <!-- More Projects -->
+                <div class="project-item">
+                    <svg class="project-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" fill="#06D6A0"/>
+                        <path d="M12 8v4m0 4h.01" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="project-name">More Projects</div>
+                    <div class="project-desc">Explore on GitHub</div>
+                    <a href="https://github.com/SinghGurjot01-Code" class="project-link" target="_blank"></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-section" style="flex-direction: column; align-items: center; gap: 30px; width: 100%;">
+                <div style="display: flex; gap: 80px; justify-content: center;">
+                    <div class="footer-column" style="align-items: center;">
+                        <h3 class="footer-title">Connect</h3>
+                        <a href="https://github.com/SinghGurjot01-Code/" class="footer-link">GitHub</a>
+                        <a href="https://www.instagram.com/sg.studio0" class="footer-link">Instagram</a>
+                    </div>
+                    <div class="footer-column" style="align-items: center;">
+                        <h3 class="footer-title">Info</h3>
+                        <a href="/Main/about.html" class="footer-link">About</a>
+                        <a href="/Main/contact.html" class="footer-link">Contact</a>
+                        <a href="/Main/Update.html" class="footer-link">Updates</a>
+                    </div>
+                </div>
+                <div class="legal-section"
+                    style="margin-top: 40px; width: 100%; display: flex; justify-content: center;">
+                    <div class="legal-links">
+                        <a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy</a>
+                        <span>·</span>
+                        <a href="javascript:void(0)" onclick="openLegalModal('terms')">Terms</a>
+                        <span>·</span>
+                        <a href="javascript:void(0)" onclick="openLegalModal('cookies')">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Legal Modal -->
+        <div id="legal-modal">
+            <div>
+                <button onclick="closeLegalModal()">✕</button>
+                <h2 id="modal-title"></h2>
+                <div id="modal-content"></div>
+            </div>
+        </div>
+
+        <script>
+            // Legal Modal Content
+            const legalTexts = {
+                privacy: `
+                    <p>We don't collect any personal data. Some basic anonymous stats (like page views or browser type) may be collected using tools like Netlify or GitHub Pages, just to improve the site.</p>
+                    <p>We don't track you, sell data, or store anything about you unless you submit something (like through a form or bot — which currently, you don't).</p>
+                `,
+                terms: `
+                    <p>This site is for showcasing personal projects.</p>
+                    <p>You're free to browse, test, and explore. Don't misuse the content, bots, or games — like trying to hack, copy without credit, or use them in shady ways.</p>
+                    <p>All project code and content belongs to me (unless linked from GitHub or otherwise mentioned).</p>
+                    <p>No guarantees everything here will always work — it's for demo and learning purposes.</p>
+                `,
+                cookies: `
+                    <p>We don't use cookies to track you.</p>
+                    <p>Some embedded content (like GitHub or chat demos) might use cookies on their own. We don't control those — they come from the tools/platforms we embed.</p>
+                    <p>You can ignore this policy if you're just browsing normally — nothing is being used to follow you around.</p>
+                `
+            };
+
+            function openLegalModal(type) {
+                document.getElementById("legal-modal").style.display = "flex";
+                document.getElementById("modal-title").innerText = type.charAt(0).toUpperCase() + type.slice(1) + " Policy";
+                document.getElementById("modal-content").innerHTML = legalTexts[type];
+            }
+
+            function closeLegalModal() {
+                document.getElementById("legal-modal").style.display = "none";
+            }
+
+            // Gemini AI Chat Implementation
+            document.addEventListener('DOMContentLoaded', function () {
+                const chatMessages = document.getElementById('chat-messages');
+                const userInput = document.getElementById('user-input');
+                const sendButton = document.getElementById('send-button');
+                const typingIndicator = document.getElementById('typing-indicator');
+
+                // Replace with your actual Gemini API key
+                const GEMINI_API_KEY = 'AIzaSyAclSZyi83duAZwJwIUb9klOyOQ_GZ-15g';
+                const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyAclSZyi83duAZwJwIUb9klOyOQ_GZ-15g";
+
+                function addMessage(text, isUser) {
+                    const messageRow = document.createElement('div');
+                    messageRow.classList.add('message-row');
+                    messageRow.classList.add(isUser ? 'user' : 'bot');
+                    
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message');
+                    messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                    messageDiv.textContent = text;
+                    
+                    messageRow.appendChild(messageDiv);
+                    chatMessages.appendChild(messageRow);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                function showTypingIndicator(show) {
+                    typingIndicator.style.display = show ? 'block' : 'none';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                async function sendToGemini(message) {
+                    showTypingIndicator(true);
+
+                    try {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                contents: [{
+                                    parts: [{
+                                        text: `You are Luma, an AI assistant. 
+                                        The website focuses on coding, game development, and AI projects. 
+                                        Follow these guidelines:
+                                        
+                                        1. Keep responses concise (1-3 sentences)
+                                        2. Focus on technical topics related to:
+                                           - Web development (HTML, CSS, JavaScript, frameworks)
+                                           - Game development (Unity, Unreal, game design)
+                                           - AI/ML (Python, TensorFlow, LLMs)
+                                        3. For non-technical questions, politely redirect to portfolio topics
+                                        4. When asked about yourself, respond: "I'm Luma, the AI assistant made by Gurjot"
+                                        5. For personal questions about the developer, say: "I can discuss the technical aspects of projects, but not personal details"
+                                        6. Format code snippets with backticks
+                                        7. Be friendly but professional
+                                        
+                                        Current user question: ${message}`
+                                    }]
+                                }]
+                            })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`API request failed with status ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        showTypingIndicator(false);
+
+                        if (data.candidates && data.candidates[0].content.parts[0].text) {
+                            return data.candidates[0].content.parts[0].text;
+                        } else {
+                            return "I'm sorry, I couldn't process that request. Please try again.";
+                        }
+                    } catch (error) {
+                        console.error('Error calling Gemini API:', error);
+                        showTypingIndicator(false);
+                        return "Sorry, I'm having trouble connecting right now. Please try again later.";
+                    }
+                }
+
+                async function handleUserMessage() {
+                    const message = userInput.value.trim();
+                    if (message === '') return;
+
+                    addMessage(message, true);
+                    userInput.value = '';
+
+                    const botResponse = await sendToGemini(message);
+                    addMessage(botResponse, false);
+                }
+
+                // Event listeners
+                sendButton.addEventListener('click', handleUserMessage);
+                userInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        handleUserMessage();
+                    }
+                });
+
+                // Initial greeting
+                setTimeout(() => {
+                    addMessage("What would you like to know about today?", false);
+                }, 1000);
+            });
+        </script>
+    </div>
+</body>
+
+</html>

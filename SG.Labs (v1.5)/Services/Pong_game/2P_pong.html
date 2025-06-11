@@ -1,0 +1,368 @@
+<style>
+    body {
+        background: black;
+        margin: 0;
+        touch-action: none;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+    }
+</style>
+
+<canvas></canvas>
+
+<script>
+    const canvas = document.querySelector('canvas')
+    const c = canvas.getContext('2d')
+
+    canvas.width = innerWidth
+    canvas.height = innerHeight
+
+    let score1 = 0
+    let score2 = 0
+    const particles = []
+    const maxScore = 10 // Game reset at 10 points
+
+    // Track touch positions for each player
+    let player1TouchId = null;
+    let player2TouchId = null;
+    let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
+
+    class Paddle {
+        constructor({ position }) {
+            this.position = position
+            this.velocity = {
+                x: 0,
+                y: 0
+            }
+            this.width = 10
+            this.height = 100
+        }
+
+        draw() {
+            c.fillStyle = 'white'
+            c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        }
+
+        update() {
+            this.draw()
+
+            if (this.position.y + this.velocity.y > 0 && this.position.y + this.height + this.velocity.y < canvas.height) {
+                this.position.y += this.velocity.y;
+            }
+        }
+    }
+
+    class Particle {
+        constructor({ position, velocity }) {
+            this.position = position
+            this.velocity = velocity
+            this.alpha = 1
+            this.radius = 3
+        }
+
+        draw() {
+            c.save()
+            c.globalAlpha = this.alpha
+            c.fillStyle = 'white'
+            c.beginPath()
+            c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
+            c.fill()
+            c.restore()
+        }
+
+        update() {
+            this.position.x += this.velocity.x
+            this.position.y += this.velocity.y
+            this.alpha -= 0.02
+        }
+    }
+
+    class Ball {
+        constructor({ position }) {
+            this.position = position
+            this.width = 10
+            this.height = 10
+            this.reset()
+        }
+
+        reset() {
+            this.position = {
+                x: canvas.width / 2 - this.width / 2,
+                y: canvas.height / 2 - this.height / 2,
+            }
+
+            const speed = 3
+            const direction = {
+                x: Math.random() > 0.5 ? speed : -speed,
+                y: Math.random() > 0.5 ? speed : -speed
+            }
+
+            this.velocity = {
+                x: direction.x,
+                y: direction.y
+            }
+        }
+
+        emitParticles() {
+            for (let i = 0; i < 8; i++) {
+                particles.push(new Particle({
+                    position: {
+                        x: this.position.x + this.width / 2,
+                        y: this.position.y + this.height / 2
+                    },
+                    velocity: {
+                        x: (Math.random() - 0.5) * 4,
+                        y: (Math.random() - 0.5) * 4
+                    }
+                }))
+            }
+        }
+
+        draw() {
+            c.fillStyle = 'white'
+            c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        }
+
+        update() {
+            this.draw()
+
+            const rightSide = this.position.x + this.width + this.velocity.x
+            const leftSide = this.position.x + this.velocity.x
+            const bottomSide = this.position.y + this.height
+            const topSide = this.position.y
+
+            // paddle 1 collision
+            if (
+                leftSide <= Paddle1.position.x + Paddle1.width &&
+                bottomSide >= Paddle1.position.y &&
+                topSide <= Paddle1.position.y + Paddle1.height
+            ) {
+                this.velocity.x = -this.velocity.x
+                this.emitParticles()
+            }
+
+            // paddle 2 collision
+            if (
+                rightSide >= Paddle2.position.x &&
+                bottomSide >= Paddle2.position.y &&
+                topSide <= Paddle2.position.y + Paddle2.height
+            ) {
+                this.velocity.x = -this.velocity.x
+                this.emitParticles()
+            }
+
+            // bounce off top or bottom
+            if (
+                this.position.y + this.height + this.velocity.y >= canvas.height ||
+                this.position.y + this.velocity.y <= 0
+            ) {
+                this.velocity.y = -this.velocity.y
+            }
+
+            // scoring
+            if (this.position.x + this.width < 0) {
+                score2++
+                this.checkScoreLimit()
+                this.reset()
+            }
+
+            if (this.position.x > canvas.width) {
+                score1++
+                this.checkScoreLimit()
+                this.reset()
+            }
+
+            this.position.x += this.velocity.x
+            this.position.y += this.velocity.y
+        }
+
+        checkScoreLimit() {
+            if (score1 >= maxScore || score2 >= maxScore) {
+                // Reset the game when a player reaches 10 points
+                alert(`Player ${score1 >= maxScore ? 1 : 2} wins!`);
+                score1 = 0;
+                score2 = 0;
+            }
+        }
+
+        increaseSpeed() {
+            // Speed up ball after every score
+            this.velocity.x *= 1.1
+            this.velocity.y *= 1.1
+        }
+    }
+
+    const Paddle1 = new Paddle({ position: { x: 10, y: canvas.height / 2 - 50 } })
+    const Paddle2 = new Paddle({ position: { x: canvas.width - 20, y: canvas.height / 2 - 50 } })
+    const ball = new Ball({ position: { x: canvas.width / 2, y: canvas.height / 2 } })
+
+    function animate() {
+        requestAnimationFrame(animate)
+        c.fillStyle = 'black'
+        c.fillRect(0, 0, canvas.width, canvas.height)
+
+        // Draw scores
+        c.fillStyle = 'white'
+        c.font = '20px Arial'
+        c.textAlign = 'left'
+        c.fillText(`P1: ${score1}`, 20, 30)
+
+        c.textAlign = 'right'
+        c.fillText(`P2: ${score2}`, canvas.width - 20, 30)
+
+        // Update game elements
+        Paddle1.update()
+        Paddle2.update()
+        ball.update()
+
+        // Update and draw particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const particle = particles[i]
+            if (particle.alpha <= 0) {
+                particles.splice(i, 1)
+            } else {
+                particle.update()
+                particle.draw()
+            }
+        }
+    }
+
+    animate()
+
+    // Keyboard controls
+    const speed = 8
+    addEventListener('keydown', (event) => {
+        switch (event.key) {
+            case 'w':
+                Paddle1.velocity.y = -speed
+                break
+            case 's':
+                Paddle1.velocity.y = speed
+                break
+            case 'ArrowUp':
+                Paddle2.velocity.y = -speed
+                break
+            case 'ArrowDown':
+                Paddle2.velocity.y = speed
+                break
+        }
+    })
+
+    addEventListener('keyup', (event) => {
+        switch (event.key) {
+            case 'w':
+            case 's':
+                Paddle1.velocity.y = 0
+                break
+            case 'ArrowUp':
+            case 'ArrowDown':
+                Paddle2.velocity.y = 0
+                break
+        }
+    })
+
+    // Touch controls for mobile devices
+    if (isTouchDevice) {
+        // Handle touch start
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touches = e.changedTouches;
+            
+            for (let i = 0; i < touches.length; i++) {
+                const touch = touches[i];
+                const touchX = touch.clientX;
+                
+                // Left side of screen for Player 1
+                if (touchX < canvas.width / 2 && player1TouchId === null) {
+                    player1TouchId = touch.identifier;
+                    Paddle1.position.y = touch.clientY - Paddle1.height / 2;
+                } 
+                // Right side of screen for Player 2
+                else if (touchX >= canvas.width / 2 && player2TouchId === null) {
+                    player2TouchId = touch.identifier;
+                    Paddle2.position.y = touch.clientY - Paddle2.height / 2;
+                }
+            }
+        });
+
+        // Handle touch move
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touches = e.changedTouches;
+            
+            for (let i = 0; i < touches.length; i++) {
+                const touch = touches[i];
+                
+                // Player 1's touch
+                if (touch.identifier === player1TouchId) {
+                    const newY = touch.clientY - Paddle1.height / 2;
+                    // Constrain paddle to canvas
+                    Paddle1.position.y = Math.max(0, Math.min(canvas.height - Paddle1.height, newY));
+                } 
+                // Player 2's touch
+                else if (touch.identifier === player2TouchId) {
+                    const newY = touch.clientY - Paddle2.height / 2;
+                    // Constrain paddle to canvas
+                    Paddle2.position.y = Math.max(0, Math.min(canvas.height - Paddle2.height, newY));
+                }
+            }
+        });
+
+        // Handle touch end
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touches = e.changedTouches;
+            
+            for (let i = 0; i < touches.length; i++) {
+                const touch = touches[i];
+                
+                if (touch.identifier === player1TouchId) {
+                    player1TouchId = null;
+                } else if (touch.identifier === player2TouchId) {
+                    player2TouchId = null;
+                }
+            }
+        });
+
+        // Handle touch cancel (like when a call comes in)
+        canvas.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            const touches = e.changedTouches;
+            
+            for (let i = 0; i < touches.length; i++) {
+                const touch = touches[i];
+                
+                if (touch.identifier === player1TouchId) {
+                    player1TouchId = null;
+                } else if (touch.identifier === player2TouchId) {
+                    player2TouchId = null;
+                }
+            }
+        });
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+        
+        // Reposition paddles and ball
+        Paddle1.position.y = canvas.height / 2 - 50;
+        Paddle2.position.x = canvas.width - 20;
+        Paddle2.position.y = canvas.height / 2 - 50;
+        ball.reset();
+    });
+
+    
+    //block code inspect 
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    document.onkeydown = function (e) {
+      if (e.key === "F12" || (e.ctrlKey && ["u", "s", "c"].includes(e.key.toLowerCase()))) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+</script>
